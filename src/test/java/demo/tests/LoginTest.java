@@ -5,8 +5,6 @@ import java.net.URI;
 import java.time.Duration;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -16,23 +14,13 @@ public class LoginTest {
     private WebDriver driver;
 
     /**
-     * Runs before each test method and creates a fresh Chrome session.
-     * Uses local Chrome unless SELENIUM_REMOTE_URL points to a Selenium server.
-     * HEADLESS=false makes local Chrome visible. Limits page loading to 30 seconds.
-     *
-     * @throws Exception if the remote URL is invalid or browser setup fails
+     * Runs before each test method and opens visible Chrome on this laptop.
+     * Maximizes the window and allows up to 30 seconds for a page to load.
      */
     @BeforeMethod
-    public void setUp() throws Exception {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--window-size=1280,800");
-        if (!"false".equalsIgnoreCase(System.getenv("HEADLESS"))) {
-            options.addArguments("--headless=new");
-        }
-        String remoteUrl = System.getenv("SELENIUM_REMOTE_URL");
-        driver = remoteUrl == null || remoteUrl.isBlank()
-                ? new ChromeDriver(options)
-                : new RemoteWebDriver(URI.create(remoteUrl).toURL(), options);
+    public void setUp() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
     }
 
