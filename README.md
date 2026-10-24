@@ -1,34 +1,20 @@
 # Simple Page Object Model Framework
 
-Stage 1: one Selenium Java/TestNG login test with hardcoded public demo credentials.
+Stage 1: a local Selenium Java/TestNG login test with hardcoded public demo credentials.
 
-## Files
+## Run in IntelliJ
 
-- `src/test/java/demo/pages/LoginPage.java`: locators and page actions.
-- `src/test/java/demo/tests/LoginTest.java`: browser setup, scenario, assertions, cleanup.
-- `pom.xml`: Maven dependencies and Surefire configuration.
+Open this folder as a Maven project, use Java 17+, and install Google Chrome. Open `src/test/java/demo/tests/LoginTest.java`, then right-click the class and select Run LoginTest. Chrome opens visibly, logs into the practice website, verifies success, and closes. No environment variables are required.
 
-## Run
+Alternatively, with Maven installed, run `mvn -Dtest=LoginTest test`.
 
-Install Java 17+, Maven, and Google Chrome. From the repository folder:
+## Understand the two classes
 
-```sh
-mvn -Dtest=LoginTest test
-```
+- `LoginPage`: locators and reusable browser actions; receives the browser from the test.
+- `LoginTest`: BeforeMethod opens Chrome, Test performs the scenario and assertions, AfterMethod closes Chrome even after failure.
 
-Chrome runs headless by default. To watch locally in PowerShell:
+Selenium Manager obtains ChromeDriver automatically; initial setup requires internet access. Reports appear in `target/surefire-reports/`.
 
-```powershell
-$env:HEADLESS = 'false'
-mvn -Dtest=LoginTest test
-```
+Credentials are the public sample values published at https://the-internet.herokuapp.com/login. Next stage: read the URL and credentials from a properties file. Never commit real passwords.
 
-Selenium Manager obtains the driver; first use requires network access. The test opens https://the-internet.herokuapp.com/login using the public demo credentials published there, then checks the success message and `/secure` URL. Test reports appear in `target/surefire-reports/`.
-
-The page object receives the test's WebDriver through its constructor. TestNG's `@BeforeMethod` creates the browser; `@Test` runs the scenario; `@AfterMethod(alwaysRun = true)` closes it. Assertions stay in the test. Explicit waits handle page readiness.
-
-No `testng.xml` is required at this stage: Surefire discovers `LoginTest` and invokes TestNG.
-
-Execution status: source prepared; this new login test has not yet been compiled or browser-verified in the assistant environment. Earlier Docker title-test results do not validate this login test.
-
-Next stage: move URL and demo credentials to a properties file. Real credentials must not be committed.
+Verification: the previous version compiled, but browser startup was blocked by the assistant environment's permissions. This simplified version has not yet been browser-verified.
